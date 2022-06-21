@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Project Specifc
+course*
+.idea
+Create Glowing Bacteria/*
+!Create Glowing Bacteria/task
