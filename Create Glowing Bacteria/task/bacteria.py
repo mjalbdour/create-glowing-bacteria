@@ -7,16 +7,27 @@ nitrogenous_bases = {
     "G": "C"
 }
 
-strand = input()
-# strand = "GACGTCTGTGCAAGTACTACTGTTCTGCAGTCACTTGAATTCGATACCCAGCTGTGTGCACTACCTCCTT"
 
-
-def create_complementary_strand(s):
+def create_complementary_bases(s):
     c = ""
     for i in range(len(s)):
         c += nitrogenous_bases[s[i]]
     return c
 
 
-complementary_strand = create_complementary_strand(strand)
-print(complementary_strand)
+restriction_seq = "CTGCAG"
+c_restriction_seq = create_complementary_bases(restriction_seq)
+
+strand, c_strand = input().split()
+# strand, c_strand = "TGACTGCAGTTAG ACTGACGTCAATC".split()
+
+
+def cut_plasmid(s: str, c_s: str):
+    s_cut = f'{s[:s.index(restriction_seq) + 1]} {s[s.index(restriction_seq) + 1:]}'
+    c_cut = f'{c_s[:c_s.rindex(c_restriction_seq) + 5]} {c_s[c_s.rindex(c_restriction_seq) + 5:]}'
+    return s_cut, c_cut
+
+
+result_cut = cut_plasmid(strand, c_strand)
+print(result_cut[0])
+print(result_cut[1])
