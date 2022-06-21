@@ -14,23 +14,26 @@ def create_complementary_bases(s):
     return c
 
 
-restriction_seq = "CTGCAG"
-c_restriction_seq = create_complementary_bases(restriction_seq)
-
-# strand, c_strand = input().split()
-# strand, c_strand = "TGACTGCAGTTAG ACTGACGTCAATC".split()
-strand = input()
-c_strand = create_complementary_bases(strand)
+def cut_gfp(g, rs1, rs2):
+    return g[g.index(rs1) + 1: g.rindex(rs2) + 1]
 
 
-def cut_plasmid(s: str, c_s: str):
-    s_cut = f'{s[:s.index(restriction_seq) + 1]} {s[s.index(restriction_seq) + 1:]}'
-    c_cut = f'{c_s[:c_s.rindex(c_restriction_seq) + 5]} {c_s[c_s.rindex(c_restriction_seq) + 5:]}'
-    return s_cut, c_cut
+def cut_c_gfp(g, rs1, rs2):
+    return g[g.index(rs1) + len(rs1) - 1: g.rindex(rs2) + len(rs2) - 1]
 
 
-# result_cut = cut_plasmid(strand, c_strand)
-# print(result_cut[0])
-# print(result_cut[1])
+gfp = input()
+restriction_site_1, restriction_site_2 = input().split()
 
-print(strand, c_strand)
+c_gfp = create_complementary_bases(gfp)
+c_restriction_site_1 = create_complementary_bases(restriction_site_1)
+c_restriction_site_2 = create_complementary_bases(restriction_site_2)
+
+
+# def cut_plasmid(s: str, c_s: str):
+#     s_cut = f'{s[:s.index(restriction_seq) + 1]} {s[s.index(restriction_seq) + 1:]}'
+#     c_cut = f'{c_s[:c_s.rindex(c_restriction_seq) + 5]} {c_s[c_s.rindex(c_restriction_seq) + 5:]}'
+#     return s_cut, c_cut
+
+
+print(cut_gfp(gfp, restriction_site_1, restriction_site_2), cut_c_gfp(c_gfp, c_restriction_site_1, c_restriction_site_2))
