@@ -14,8 +14,7 @@ def create_complementary_bases(s):
     return c
 
 
-def cut_plasmid(s, c_s, rs):
-    c_rs = create_complementary_bases(rs)
+def cut_plasmid(s, c_s, rs, c_rs):
     s_cut = f'{s[:s.index(rs) + 1]} {s[s.index(rs) + 1:]}'
     c_cut = f'{c_s[:c_s.rindex(c_rs) + 5]} {c_s[c_s.rindex(c_rs) + 5:]}'
     return s_cut, c_cut
@@ -29,37 +28,52 @@ def cut_c_gfp(g, rs1, rs2):
     return g[g.index(rs1) + len(rs1) - 1: g.rindex(rs2) + len(rs2) - 1]
 
 
-def ligate(pt, pb, gt, gb):
-    top = pt[0] + gt + pt[1]
-    bottom = pb[0] + gb + pb[1]
+def ligate(p_cut, gfp_cut, c_gfp_cut):
+    pt = p_cut[0].split()
+    pb = p_cut[1].split()
+    top = pt[0] + gfp_cut + pt[1]
+    bottom = pb[0] + c_gfp_cut + pb[1]
     return top, bottom
 
 
-# gfp = input()
-# restriction_site_1, restriction_site_2 = input().split()
+def print_results(top, bottom):
+    print(top)
+    print(bottom)
 
-# c_gfp = create_complementary_bases(gfp)
-# c_restriction_site_1 = create_complementary_bases(restriction_site_1)
-# c_restriction_site_2 = create_complementary_bases(restriction_site_2)
 
-# print(cut_gfp(gfp, restriction_site_1, restriction_site_2), cut_c_gfp(c_gfp, c_restriction_site_1, c_restriction_site_2))
-
-def parse_data(filename='example.txt'):
+def parse_data(filename):
     file = open(filename, 'rt')
-    lines = file.readlines()[:2]
-    first_line = lines[0].split()
-    plasmid_top = (first_line[0], first_line[1])
-    plasmid_bottom = (first_line[2], first_line[3])
-    second_line = lines[1].split()
-    gfp = (second_line[0], second_line[1])
+    lines = file.readlines()
     file.close()
 
-    return plasmid_top, plasmid_bottom, gfp
+    plasmid = lines[0].rstrip("\n")
+    rs = lines[1].rstrip("\n")
+    gfp = lines[2].rstrip("\n")
+    rs1_gfp, rs2_gfp = lines[3].split()
+
+    return plasmid, rs, gfp, rs1_gfp, rs2_gfp
+
+
+def complement_and_cut_data(plasmid, rs, gfp, rs1_gfp, rs2_gfp):
+    c_plasmid = create_complementary_bases(plasmid)
+    c_rs = create_complementary_bases(rs)
+    c_gfp = create_complementary_bases(gfp)
+    c_rs1_gfp = create_complementary_bases(rs1_gfp)
+    c_rs2_gfp = create_complementary_bases(rs2_gfp)
+
+    p_cut = cut_plasmid(plasmid, c_plasmid, rs, c_rs)
+    gfp_cut = cut_gfp(gfp, rs1_gfp, rs2_gfp)
+    c_gfp_cut = cut_c_gfp(c_gfp, c_rs1_gfp, c_rs2_gfp)
+
+    return p_cut, gfp_cut, c_gfp_cut
+
+
+def process_data(filename):
+    plasmid, rs, gfp, rs1_gfp, rs2_gfp = parse_data(filename)
+    p_cut, gfp_cut, c_gfp_cut = complement_and_cut_data(plasmid, rs, gfp, rs1_gfp, rs2_gfp)
+    top, bottom = ligate(p_cut, gfp_cut, c_gfp_cut)
+    print_results(top, bottom)
 
 
 file_name = input()
-ptop, pbottom, gfp_ = parse_data(file_name)
-
-upper, lower = ligate(ptop, pbottom, gfp_[0], gfp_[1])
-print(upper)
-print(lower)
+process_data(file_name)
